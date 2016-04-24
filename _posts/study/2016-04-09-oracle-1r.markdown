@@ -1,0 +1,173 @@
+---
+layout: post
+title: oracle 1r
+date: 2016-04-09  9:14:56 +0900
+description: ''
+image: ''
+categories: study
+published: false
+comments: false
+tags:
+- study
+- oracle
+---
+
+
+# DB
+
+- 오라클이 아닌 다른 DB를 알아야함.
+
+# rdb 에서의 행 
+
+- row (column)  
+- record (field)  
+  1:n의 관계도 한 행으로 처리한다.  
+  오라클의 경우 성능을 극대화 시키기 위해 클러스터라는 이름아래 물리적으로 이런 방식을 취할 수 도 있다.
+- tuple (entity, attribute)  
+
+> attribute 와 tuple이 만나서 단 하나의 value를 정의 하는 것이 rdb 이다.
+
+# RDB 
+
+__초창기 lacking__
+
+- oracle  
+  태성부터 row level lacking을 지원함.
+- mssql  
+  page level lacking  
+  페이지 락킹에 프로세스가 잡히면 size가 커짐
+- mysql (innodb)  
+  table level lacking  
+  데량 트래픽을 잘 못 버팀  
+  myisam < 1200만건 이상 테이블은 무리 (인덱스가 깨지며 데이터 소실)
+- imformix (육군에서 사용중..)
+  black level lacking  
+- sybase
+
+> rdb는 메커니즘으로는 비슷하나, `lacking`메커니즘의 차이점이 있다. 현제는 모든 db에서 `row level lacking`이 지원이 되고 있으며, 이제 RDB는 `row level lacking`이 수준에 따라 성능이 갈린다.
+
+# DB history
+
+초창기의 file 시스템부터 현제의 rdb까지의 간단한 흐름을 알아보자.
+
+### file
+- SAM  
+  [순차적접근방식(sequential access metohd)](https://ko.wikipedia.org/wiki/%EC%88%9C%EC%B0%A8_%EC%A0%91%EA%B7%BC)  
+자기테이프 시절에 만들어진 db인데 보조기억장치 자체가 순차적으로 처리하는 방식이기 때문이다. 이후에 hdd로 바뀌고도 계속 사용되었다.
+- ISAM (indexed acess method)  
+  ISAM의 인덱스 주소는 물리적인 주소라 파일을 다른 곳으로 옮기면 데이터를 못 가져오는 단점이 있다. 필수적으로 재 인덱싱이 필요하다.
+- VSAM (vertual)  
+  인덱스가 논리적인 주소라 ISMA의 문제를 해결하였다.
+- **문제점**{:style='color:red'}  
+  동시 접근시 접근 제어에 대한 코드를 프로그래머가 처리해야함(무결성,일관성,암호화)
+
+_위의 문제점을 해결하기 위해 DB가 나왔음. hdb로_
+
+### hdb  
+
+계층형 db, data set이 계층형이라 최상위부터 내려가야함(tree 구조)  
+설계하는 사람이 너무 힘듬
+
+- 장점  
+  data를 엑세스 하는 방식이 똑같아, 성능의 차이가 없음  
+  퍼포먼스의 이슈가 업음
+- 단점  
+  데이터를 손 쉽게 못가져옴  
+  서비스가 새로 생기면 data set을 새로 구성해야함(재구축....)
+  
+_위에가 너무 힘드니 ndb(network db)가 튀어 나왔음 하지만 너무 복잡해서 사그라들음, 그리고나서 rdb가 나왔음_
+
+### rdb  
+
+엔티티를 정확히 정의(릴레이션)하면 참조에 대한 문제가 사라짐
+
+- 문제  
+  데이터를 엑세스 하는 방식이 너무 다양함  
+  초기에는 성능에 대해 신뢰하지 못하는 사람들이 나옴 이유는 최적의 경로를 sql로 만들지 못했기 때문. 이런 이유로 sql의 이슈가 부각되었음
+
+_그 후에 odb가 제안되었으나 잘 사용안됨_
+
+### odb
+
+rdb가 2차원이라면 odb은 3차원이다.
+
+> 사실 file 시스템이 제일 성능이 좋으나, 성능을 포기하고도 보안, 무결성, 일관성을 지키기 위해 db를 사용한다.
+
+# sql을 잘하기 위해
+
+옵티마이저를 알아야한다. 작동 방식엔 2가지가 있다
+
+- rule based > user 주도  
+  고정된 길로간다.
+- cost based > 옵티마이져 주도  
+  가지고 있는 `통계정보 데이터`를 기준으로 옵티마이져가 알아서 판단해서 굴러감
+
+10g에서는 rule based 가 없어졌다. 정확이 이야기하면 cost based 안에 rule based가 포함되었다.
+
+## join의 종류
+
+- nested loop joing
+  - io 문제 (건 by 건)
+  - cpu 사용량 up
+- sort joing
+  - 한번에 읽어 들임
+  - memory 사용량 up
+- hash
+
+10g부터 oracle이 옵티마이져를 완젼히 바꿔버림 > 프로그래머의 작업을 믿지 않고 최악의 플랜을 피해가는 방법으로 실행 플랜을 조절하였다. 그래서 왼만한 join이 hash join으로 풀리게 된다.
+
+> 만약 오라클을 업데이트를 했는데 실행 플랜이 바뀐다면, sql자체가 단단히 짜여진 것이 아니다.
+
+## dba의 튜닝
+
+구조적 관점에서의 튜닝이라, 비즈니스적 데이터 관점으로는 튜닝할 수가 없다. data는 개발자가 관리하는 것이고 date의 구조(object)는 dba가 관리하는 것이다. 개발자와 dba 중간에 모덜러가 있어야 한다. 그러나 비즈니스를 아는 사람이 모델러를 해야한다. 보통은 모델러가 없기 때문에 개발자가 모델러를 담당하게 된다. 이렇게 되는 경우의 문제점은 개발자는 db를 잘 모르는 경우가 많기 때문에 자기 수준에서 설계를 하게 되기 때문에 db 구조가 이상하게 설계될 가능성이 많다.
+
+# unix 에서 프로그램 통신
+
+- fifo
+- pipe `|`
+- ipc(inter process commnication)
+  - ipcs 명령어 `os 커널 단계에서 수정할 수 있는 파라메터가 있음 > dba 는 이 파라메터를 필수로 손봐야한다.`
+    - shared memory
+    - semaphore  
+      단 하나의 프로세스만 접근이 가능하게 해야할 경우 세마포어를 사용한다.
+    - message 큐  
+      오라클에서는 사용하지 않는다.
+  - 셧다운을 시켰는데 안죽는다면 오라클이 안죽은 것이다 `ipcrm`이라는 커맨드로 이 영역을 없앨 수 있다.
+
+# 권한 관리 - permission
+
+```
+-rwxr-xr-x < 이런식  
+ ---  
+ user  
+    ---  
+    group  
+       ---  
+       others
+```
+
+비트연산의 장점은 절대 같은 조합의 수가 나오지 않는다는 점이다.
+
+디렉토리
+
+```shell
+. < 현재폴더  
+.. < 상위폴더  
+```
+
+파일을 삭제하는 것은 `.` 디렉토리의 내용을 수정하는 것이다. 
+
+파일을 보다보면 퍼미션이 가끔 rws > s는 set uid의 의미로 file owner가 바뀌게 된다. 즉 오너의 권한을 위임받게 되어서 파일을 실행 할 수 있게 된다.
+
+오라클을 설치하려면 보통 먼저 유져 그룹을 물어봄. oracle이라는 유저를 만들고 oinstall이라는 그룹을 만들어서 설치, dba라는 그룹을 만들어서 실질적인 dba 유저를 관리한다. 오라클이 다운되고 인증을 할때에 누가 dba인지 모르기 때문에 os에 인증을 위임한다. 오라클은 dba에 속한 그룹의 유져가 로그인 하면 그 유저가 관리자라고 본다.
+
+# db server
+
+db server <--> client
+
+db server에는 listener(리스너)가 떠 있어서 모든 클라이언트의 요청을 받는다. sid (create db ----) 클라이언트가 이 리스너에 접속을 하려면 `protocal`, `ip`, `post`, `sid`가 필수로 필요하다. 이걸 매번 적어서 요청을 보내기가 벅차니 `tmsnames.ora` 파일에 정의를 한다.
+
+서버의 경우에는 여러개의 db 인스턴스가 있을 수가 있다. 이런 정보를 모아서 `listener.ora` 파일로 정의 할 수 있다.
+
+클라이언트가 오라클 인스턴스가 제대로 살아있는지 확인하려면 `ping`을 먼저 확인한다. 실패하면 네트워크 문제 > 통과하면 `tmsping`을 확인한다. 여기서 실패하면 db접속의 문제이다.

@@ -1,30 +1,54 @@
 # Site settings
-title: seotory dev story
+title: Seotory
 email: seotory437@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  서토리의 고분고투 개발 스토리를 담은 블로그입니다.
+
+# url info
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://seotory.github.io" # the base hostname & protocol for your site
+url: https://blog.seotory.com # the base hostname & protocol for your site
+enforce_ssl: blog.seotory.com
+
+# sns info
 twitter_username: seotory
 github_username:  seotory
+facebook_username: ""
 
+# url change (/:year/:month/:day)
+permalink: /post/:year/:month/:title
+
+# timezone
+timezone: Asia/Seoul
+
+# highlighter settings
 # Build settings
+highlighter: rouge
 markdown: kramdown
 
 kramdown:
   input: GFM
+  hard_wrap: false
+  auto_ids: false
+  auto_id_stripping: false
+  /*enable_coderay: true*/
   syntax_highlighter: rouge
+  parse_block_html: false
+  /*html_to_native: ture*/
+  enable_coderay: true
+
+  coderay:
+    coderay_wrap: div
+    coderay_line_numbers: inline
+    coderay_tab_width: 4
+    coderay_bold_every: 10
+    coderay_css: class
 
 # post separator
 excerpt_separator: <!--more-->
 
-# highlighter settings
-highlighter: pygments
-
-# url change
-permalink: /:categories/:title/
+# CSSls
+sass:
+  sass_dir: _sass
 
 # collections
 collections:
@@ -33,9 +57,15 @@ collections:
     permalink: /solution/:categories/:title/
 
 # paging
-paginate: 3
-paginate_path: "/list:num/"
+paginate: 15
+paginate_path: "/list/:num/"
 
 # gems
-gems: [jekyll-paginate]
+gems:
+  - jekyll-paginate
 
+# plugins
+# safe: true
+
+# exclude
+exclude: [Rakefile, README, Gemfile]

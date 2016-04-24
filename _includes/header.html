@@ -20,8 +20,9 @@
     </div>
     <div class="site-cate">
       <ul>
-        <li><a href="/ex">ex</a></li>
-        <li><a href="/error">error</a></li>
+        {% for category in site.categories %}
+        <li><a href="/categories/{{ category | first }}/">{{ category | first }}</a></li>
+        {% endfor %}
       </ul>
     </div>
   </div>

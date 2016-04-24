@@ -1,0 +1,19 @@
+---
+layout: post
+title: my q&a
+date: 2016-03-27 11:36:37 +0900
+categories: 
+published: false
+comments: false
+---
+궁금한거 리스트...
+<!--more-->
+
+- 리눅스 프로세스 띄우는 방법 두가지 exec, fork 의 차이점
+- l1 ~ l7 장비는 무었인가?
+- DLL이 무엇인가?
+- 스레드와 프로세스의 차이점
+- 세마포어
+- 네트워크 환경에서 linux 파일 이동
+- 뮤턴트
+- 동시집계

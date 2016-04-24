@@ -1,0 +1,35 @@
+---
+layout: post
+title: linux 1r
+date: 2016-04-09 11:56:22 +0900
+description: ''
+image: ''
+categories: study
+published: false
+comments: false
+tags:
+- linux
+- study
+---
+
+버쳐박스 설치하고 나서 기본 폴더 변경
+
+리눅스의 swap을 메모리의 2배를 하라고 하는건 매우 예전 이야기. 서버에서는 swap을 사용하지 않는게 맞다 swap을 사용한다면 메모리를 더 꽂자.
+
+
+```
+gedit /etc/hostname # 이 서버 호스트 네임
+gedit /etc/hosts    # 실질적으로 호스트 픽스
+```
+
+고정 ip 변경하기 (DMS 서버는 무조건 고정 ip)
+
+```
+cd /etc/sysconfig/network-scripts/  # 랜카드 설정 파일 모여있음
+```
+
+호스트 온니 랜카드를 찾아서  `BOOTPROTP=static` `IPADDR=xxx.xxx.xxx.xxx` `NETMASK=255.255.255.0` `ONBOOT=yse` > 부팅될때 랜카드 연결시킬지..
+
+```
+service network restart
+```

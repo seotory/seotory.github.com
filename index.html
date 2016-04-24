@@ -1,99 +1,64 @@
 ---
 layout: default
 ---
+<section class="page-content">
+  <div class="wrapper">
+    <div class="home">
 
-<div class="home">
-<!--
-  <h1 class="page-heading">Posts</h1>
--->
-  <img src="http://placehold.it/740x100/000000">
-  <ul class="post-list">
-    {% for post in paginator.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+      <ul class="post-list">
+        {% for post in paginator.posts %}
+          <li>
+            <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+            <h3>
+              <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+            </h3>
+            {% if post.description %}
+              <p>
+                {{ post.description | strip_html }} 
+                {% if post.comments %}
+                <a href="{{ root_url }}{{ post.url }}#disqus_thread" data-disqus-identifier="{{post.url}}"></a>
+                {% endif %}
+                <a href="{{ root_url }}{{ post.url }}">[more]</a>
+              </p>
+            {% else %}
+              <p>
+                {{ post.excerpt | strip_html | truncatewords: 40 }} 
+                {% if post.comments %}
+                <a href="{{ root_url }}{{ post.url }}#disqus_thread" data-disqus-identifier="{{post.url}}"></a>
+                {% endif %}
+                <a href="{{ root_url }}{{ post.url }}">[more]</a>
+              </p>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
 
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-        {% if post.excerpt %}
-          <p>{{ post.excerpt | remove: '<p>' | remove: '</p>' | truncatewords: 40 }} <span>...[see more]</span></p>
+      {% if paginator.total_pages > 1 %}
+      <div class="pagination">
+        {% if paginator.previous_page %}
+        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo; Prev</a>
+        {% else %}
+        <span>&laquo; Prev</span>
         {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
 
-  {% if paginator.total_pages > 1 %}
-  <div class="pagination">
-    {% if paginator.previous_page %}
-      <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo; Prev</a>
-    {% else %}
-      <span>&laquo; Prev</span>
-    {% endif %}
+        {% for page in (1..paginator.total_pages) %}
+          {% if page == paginator.page %}
+          <em>{{ page }}</em>
+          {% elsif page == 1 %}
+          <a href="/{{site.baseurl | replace: '//', '/'}}">{{ page }}</a>
+          {% else %}
+          <a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a>
+          {% endif %}
+        {% endfor %}
 
-    {% for page in (1..paginator.total_pages) %}
-      {% if page == paginator.page %}
-        <em>{{ page }}</em>
-      {% elsif page == 1 %}
-        <a href="/{{site.baseurl | replace: '//', '/'}}">{{ page }}</a>
-      {% else %}
-        <a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a>
+        {% if paginator.next_page %}
+        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Next &raquo;</a>
+        {% else %}
+        <span>Next &raquo;</span>
+        {% endif %}
+      </div>
       {% endif %}
-    {% endfor %}
 
-    {% if paginator.next_page %}
-      <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Next &raquo;</a>
-    {% else %}
-      <span>Next &raquo;</span>
-    {% endif %}
+    </div>
   </div>
-  {% endif %}
-
-  <!--
-
-  <hr />
-
-  <h1 class="page-heading">Solutions</h1>
-
-  <ul class="post-list">
-    {% for post in site.solutions %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>
-
-
-
-  {% for collection in site.collections %}
-    {% assign label = collection.relative_directory | remove:"_" %}
-    {{label}}
-    {% for doc in site[label] %}
-      <li>
-        <span>{{ doc.date | date_to_string }}</span>
-        <a href="{{ site.url }}{{ doc.url }}">{{ doc.title }}</a>
-      </li>
-    {% endfor %}
-
-  {% endfor %}
-
-  {% for issue in site.collections %}
-  {{issue}}
-  <li>
-    <h6 class="post-meta">
-      Issue {{ issue[1].label }}
-      &mdash;
-      {{ issue[1].date | date: "%b %-d, %Y" }}
-    </h6>
-    <h2>
-      {{ issue[1].title }}
-    </h2>
-  </li>
-{% endfor %}
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
--->
-
-</div>
+</section>
